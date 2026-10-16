@@ -109,7 +109,7 @@ function sampleGrid(pixels, sw, sh, cols, rows) {
 // 直接按 Lab 最近取色（关闭抖动时使用）
 function rgbToCodes(grid) {
   return grid.map(row => row.map(c =>
-    c ? _CODES[nearestLabIdx(rgbToLab(c[0], c[1], c[2]))] : 'H2'
+    c ? _CODES[nearestLabIdx(rgbToLab(c[0], c[1], c[2]))] : '__BG__'
   ));
 }
 
@@ -127,7 +127,7 @@ function fsDither(grid, rows, cols) {
     const crow = [];
     for (let x = 0; x < cols; x++) {
       const p = lab[y][x];
-      if (!p) { crow.push('H2'); continue; } // 背景格：直接白，不抖动
+      if (!p) { crow.push('__BG__'); continue; } // 背景格：占位哨兵（不会与任何真实色号撞车），渲染/统计时按 external 跳过
       const idx = nearestLabIdx(p);
       const best = _LAB[idx];
       crow.push(_CODES[idx]);
