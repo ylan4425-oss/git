@@ -4,11 +4,11 @@ const { drawChart, exportChartToAlbum, exportChartToFile, exportChartToAlbumWith
 const { verifyImage } = require('../../utils/security.js');
 const { getPalette, getPlate, getBrand, listBrands, DEFAULT_BRAND } = require('../../utils/brands.js');
 
-// 从某品牌色库里抽 12 个代表性色块，用于「品牌辨认」弹窗
+// 从某品牌色库里抽 12 个代表性色块，用于「品牌辨认」弹窗（带色号，方便对照实物确认品牌）
 function sampleSwatches(palette, n) {
   const step = Math.max(1, Math.floor(palette.length / n));
   const out = [];
-  for (let i = 0; i < palette.length && out.length < n; i += step) out.push(palette[i].hex);
+  for (let i = 0; i < palette.length && out.length < n; i += step) out.push({ hex: palette[i].hex, code: palette[i].code });
   return out;
 }
 

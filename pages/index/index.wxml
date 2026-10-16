@@ -71,8 +71,12 @@
       <view class="quiz-tip">点选和你实物豆颜色最像的那一排（每排是该品牌的代表色）</view>
       <view class="quiz-row" wx:for="{{quizBrands}}" wx:key="id" data-brand="{{item.id}}" bindtap="chooseBrandInQuiz">
         <view class="quiz-name">{{item.name}}</view>
+        <view class="quiz-tip2">点色块下的色号，对照你手里的豆确认品牌</view>
         <view class="quiz-swatches">
-          <view class="qsw" wx:for="{{item.swatches}}" wx:for-item="sw" wx:key="*this" style="background:{{sw}}"></view>
+          <view class="qsw-wrap" wx:for="{{item.swatches}}" wx:for-item="sw" wx:key="code">
+            <view class="qsw" style="background:{{sw.hex}}"></view>
+            <text class="qsw-code">{{sw.code}}</text>
+          </view>
         </view>
       </view>
       <button class="quiz-default" bindtap="useDefaultBrand">不确定，用默认（最流行 Artkal）</button>
