@@ -1,0 +1,82 @@
+<view class="page">
+  <view class="hero">拼豆图纸生成器</view>
+  <view class="sub">任意图片 → 品牌色号图纸</view>
+
+  <view class="card">
+    <button class="pick" bindtap="chooseImage">{{imagePath ? '重新选图' : '选择图片'}}</button>
+    <view class="safe-tip">选图后会先进行一次内容合规检测；用于检测的图片在检测完成后立即删除，不留存</view>
+    <view class="canvas-wrap">
+      <canvas type="2d" id="preview" class="preview"></canvas>
+    </view>
+    <view wx:if="{{!hasResult}}" class="tip">选一张图，自动生成可拼的图纸</view>
+  </view>
+
+  <view class="card brandbar">
+    <view class="brand-now">当前品牌：<text class="brand-name">{{brandName}}</text></view>
+    <button class="brand-btn" size="mini" bindtap="openBrandQuiz">更换 / 辨认品牌</button>
+  </view>
+
+  <view class="card" wx:if="{{hasResult}}">
+    <view class="row">
+      <text class="label">横向格数</text>
+      <slider class="slider" min="10" max="100" value="{{cols}}" show-value bindchange="onCols" />
+    </view>
+    <view class="row">
+      <text class="label">颜色合并（去杂色）</text>
+      <slider class="slider" min="0" max="120" value="{{mergeThreshold}}" show-value bindchange="onThreshold" />
+    </view>
+    <view class="row">
+      <text class="label">自动去背景</text>
+      <switch checked="{{removeBg}}" bindchange="onBg" />
+    </view>
+    <view class="row">
+      <text class="label">抖动（更细腻）</text>
+      <switch checked="{{dither}}" bindchange="onDither" />
+    </view>
+    <view class="row">
+      <text class="label">单色清理（更干净）</text>
+      <switch checked="{{cleanup}}" bindchange="onCleanup" />
+    </view>
+    <view class="row" wx:if="{{removeBg}}">
+      <text class="label">背景灵敏度</text>
+      <slider class="slider" min="200" max="250" value="{{bgThreshold}}" show-value bindchange="onBgThreshold" />
+    </view>
+    <view class="row">
+      <text class="label">显示色号</text>
+      <switch checked="{{showCode}}" bindchange="onCode" />
+    </view>
+    <button type="primary" class="export" loading="{{exporting}}" bindtap="exportImage">导出图纸到相册</button>
+    <button class="export grid" loading="{{exportingGrid}}" bindtap="exportImageGrid">导出带网格图纸（坐标+分板）</button>
+    <button class="share" bindtap="shareImage">分享图纸给朋友</button>
+    <button class="share" bindtap="shareImageGrid">分享带网格图纸</button>
+  </view>
+
+  <view class="card" wx:if="{{hasResult}}">
+    <view class="mat-title">用豆清单（共 {{totalBeads}} 粒 · {{brandName}}）</view>
+    <view class="mat-grid">
+      <view class="mat-item" wx:for="{{material}}" wx:key="code">
+        <view class="swatch" style="background:{{item.hex}}"></view>
+        <text class="mc">{{item.code}}</text>
+        <text class="mn">×{{item.count}}</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="foot">色板：Artkal S(199) / MARD(221)，数据来自 craft-color-codes（MIT，社区实物采样）</view>
+
+  <!-- 品牌辨认弹窗 -->
+  <view wx:if="{{showBrandQuiz}}" class="mask" bindtap="closeBrandQuiz">
+    <view class="quiz" catchtap="noop">
+      <view class="quiz-title">你手里的豆更接近哪个品牌？</view>
+      <view class="quiz-tip">点选和你实物豆颜色最像的那一排（每排是该品牌的代表色）</view>
+      <view class="quiz-row" wx:for="{{quizBrands}}" wx:key="id" data-brand="{{item.id}}" bindtap="chooseBrandInQuiz">
+        <view class="quiz-name">{{item.name}}</view>
+        <view class="quiz-swatches">
+          <view class="qsw" wx:for="{{item.swatches}}" wx:for-item="sw" wx:key="*this" style="background:{{sw}}"></view>
+        </view>
+      </view>
+      <button class="quiz-default" bindtap="useDefaultBrand">不确定，用默认（最流行 Artkal）</button>
+      <button class="quiz-close" bindtap="closeBrandQuiz">关闭</button>
+    </view>
+  </view>
+</view>

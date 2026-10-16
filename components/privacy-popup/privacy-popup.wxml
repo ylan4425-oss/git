@@ -1,0 +1,22 @@
+<view class="pmask" wx:if="{{visible}}" catchtouchmove="prevent">
+  <view class="pdialog">
+    <view class="ptitle">用户隐私保护提示</view>
+    <view class="pcontent">
+      感谢你使用「拼豆图纸生成器」。在使用前，请先阅读并同意
+      <text class="plink" bindtap="openContract">《小程序用户隐私保护指引》</text>
+      。
+    </view>
+    <view class="pcontent psub">
+      我们只会在你主动选图、保存图纸时访问你的相册；图片全部在你的手机上处理，不会上传到任何服务器。
+    </view>
+    <view class="pbtns">
+      <button class="pbtn pbtn-cancel" bindtap="onDisagree">不同意</button>
+      <button
+        id="agree-btn"
+        class="pbtn pbtn-agree"
+        open-type="agreePrivacyAuthorization"
+        bindagreeprivacyauthorization="onAgree"
+      >同意并继续</button>
+    </view>
+  </view>
+</view>

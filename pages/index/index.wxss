@@ -1,0 +1,184 @@
+.page {
+  padding: 24rpx;
+  box-sizing: border-box;
+}
+.hero {
+  font-size: 40rpx;
+  font-weight: 700;
+  text-align: center;
+  margin-top: 8rpx;
+}
+.sub {
+  font-size: 24rpx;
+  color: #6b7280;
+  text-align: center;
+  margin-bottom: 20rpx;
+}
+.card {
+  background: #fff;
+  border-radius: 20rpx;
+  padding: 24rpx;
+  margin-bottom: 24rpx;
+  box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.04);
+}
+.pick {
+  background: #6366f1;
+  color: #fff;
+  font-size: 30rpx;
+  border-radius: 14rpx;
+}
+.safe-tip {
+  margin-top: 12rpx;
+  font-size: 22rpx;
+  color: #9ca3af;
+  text-align: center;
+  line-height: 1.6;
+}
+.canvas-wrap {
+  margin-top: 20rpx;
+  width: 100%;
+  height: 62vw;
+  background: #fafafa;
+  border: 1rpx dashed #d1d5db;
+  border-radius: 14rpx;
+  overflow: hidden;
+}
+.preview {
+  width: 100%;
+  height: 100%;
+}
+.tip {
+  text-align: center;
+  color: #9ca3af;
+  font-size: 26rpx;
+  margin-top: 16rpx;
+}
+.row {
+  display: flex;
+  align-items: center;
+  margin: 18rpx 0;
+}
+.label {
+  width: 240rpx;
+  font-size: 27rpx;
+  color: #374151;
+  flex-shrink: 0;
+}
+.slider {
+  flex: 1;
+}
+.export {
+  margin-top: 16rpx;
+  background: #10b981;
+  color: #fff;
+}
+.share {
+  margin-top: 16rpx;
+  background: #6366f1;
+  color: #fff;
+}
+.mat-title {
+  font-size: 28rpx;
+  font-weight: 600;
+  margin-bottom: 16rpx;
+}
+.mat-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12rpx;
+}
+.mat-item {
+  display: flex;
+  align-items: center;
+  background: #f9fafb;
+  border-radius: 10rpx;
+  padding: 6rpx 12rpx;
+}
+.swatch {
+  width: 32rpx;
+  height: 32rpx;
+  border-radius: 6rpx;
+  border: 1rpx solid rgba(0, 0, 0, 0.1);
+  margin-right: 8rpx;
+}
+.mc {
+  font-size: 24rpx;
+  color: #374151;
+}
+.mn {
+  font-size: 22rpx;
+  color: #6b7280;
+  margin-left: 6rpx;
+}
+.foot {
+  text-align: center;
+  font-size: 22rpx;
+  color: #9ca3af;
+  margin: 10rpx 0 30rpx;
+}
+
+/* 品牌栏 */
+.brandbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.brand-now { font-size: 27rpx; color: #374151; }
+.brand-name { font-weight: 700; color: #6366f1; }
+.brand-btn {
+  background: #eef2ff;
+  color: #4338ca;
+  font-size: 24rpx;
+  margin: 0;
+}
+
+/* 网格导出按钮（区别于普通导出） */
+.export.grid { background: #0ea5e9; }
+
+/* 品牌辨认弹窗 */
+.mask {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+}
+.quiz {
+  width: 88vw;
+  max-height: 80vh;
+  overflow-y: auto;
+  background: #fff;
+  border-radius: 20rpx;
+  padding: 28rpx;
+  box-sizing: border-box;
+}
+.quiz-title { font-size: 30rpx; font-weight: 700; text-align: center; }
+.quiz-tip { font-size: 23rpx; color: #6b7280; text-align: center; margin: 10rpx 0 20rpx; line-height: 1.6; }
+.quiz-row {
+  border: 2rpx solid #e5e7eb;
+  border-radius: 14rpx;
+  padding: 16rpx;
+  margin-bottom: 16rpx;
+}
+.quiz-name { font-size: 26rpx; font-weight: 600; margin-bottom: 10rpx; }
+.quiz-swatches { display: flex; flex-wrap: wrap; gap: 8rpx; }
+.qsw {
+  width: 44rpx;
+  height: 44rpx;
+  border-radius: 8rpx;
+  border: 1rpx solid rgba(0, 0, 0, 0.12);
+}
+.quiz-default {
+  margin-top: 8rpx;
+  background: #6366f1;
+  color: #fff;
+  font-size: 26rpx;
+}
+.quiz-close {
+  margin-top: 12rpx;
+  background: #f3f4f6;
+  color: #374151;
+  font-size: 26rpx;
+}

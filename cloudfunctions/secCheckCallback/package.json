@@ -1,0 +1,9 @@
+{
+  "name": "secCheckCallback",
+  "version": "1.0.0",
+  "description": "接收内容安全异步检测结果的消息推送",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "~2.6.3"
+  }
+}
