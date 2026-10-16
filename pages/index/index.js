@@ -1,6 +1,6 @@
 // pages/index/index.js
 const { generatePattern, S } = require('../../utils/processor.js');
-const { drawChart, exportChartToAlbum, exportChartToFile, exportChartToAlbumWithGrid, exportChartToFileWithGrid } = require('../../utils/export.js');
+const { drawChart, exportChartToAlbum, exportChartToFile, exportChartToAlbumWithGrid, exportChartToFileWithGrid, exportBoardsToAlbum } = require('../../utils/export.js');
 const { verifyImage } = require('../../utils/security.js');
 const { getPalette, getPlate, getBrand, listBrands, DEFAULT_BRAND } = require('../../utils/brands.js');
 
@@ -30,6 +30,7 @@ Page({
     totalBeads: 0,
     exporting: false,
     exportingGrid: false,
+    exportingBoards: false,
     showBrandQuiz: false,
     quizBrands: []
   },
@@ -301,6 +302,27 @@ Page({
         wx.showShareImageMenu({ path, fail: () => wx.showToast({ title: '已取消分享', icon: 'none' }) });
       })
       .catch(() => { wx.hideLoading(); wx.showToast({ title: '生成失败', icon: 'none' }); });
+  },
+
+  exportBoards() {
+    if (!this._result || this.data.exportingBoards) return;
+    const that = this;
+    this.setData({ exportingBoards: true });
+    wx.showLoading({ title: '导出分板中' });
+    exportBoardsToAlbum({
+      grid: that._result.grid, external: that._result.external,
+      cell: 30, showCode: that.data.showCode, plateSize: that.data.plateSize
+    })
+      .then((total) => {
+        wx.hideLoading();
+        wx.showToast({ title: '已导出 ' + total + ' 张分板图', icon: 'success' });
+        that.setData({ exportingBoards: false });
+      })
+      .catch((err) => {
+        wx.hideLoading();
+        that.setData({ exportingBoards: false });
+        that.reportFail(err, '导出分板');
+      });
   },
 
   onShareAppMessage() {

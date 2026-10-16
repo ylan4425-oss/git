@@ -47,6 +47,7 @@
     </view>
     <button type="primary" class="export" loading="{{exporting}}" bindtap="exportImage">导出图纸到相册</button>
     <button class="export grid" loading="{{exportingGrid}}" bindtap="exportImageGrid">导出带网格图纸（坐标+分板）</button>
+    <button class="export board" loading="{{exportingBoards}}" bindtap="exportBoards">导出分板图（逐板+局部坐标）</button>
     <button class="share" bindtap="shareImage">分享图纸给朋友</button>
     <button class="share" bindtap="shareImageGrid">分享带网格图纸</button>
   </view>
@@ -62,7 +63,7 @@
     </view>
   </view>
 
-  <view class="foot">色板：Artkal S(199) / MARD(221)，数据来自 craft-color-codes（MIT，社区实物采样）</view>
+  <view class="foot">色板：Artkal(199) / MARD(221) / Hama(92) / Nabbi(30)，数据来自 craft-color-codes（MIT，社区实物采样）</view>
 
   <!-- 品牌辨认弹窗 -->
   <view wx:if="{{showBrandQuiz}}" class="mask" bindtap="closeBrandQuiz">

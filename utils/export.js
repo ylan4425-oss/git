@@ -45,9 +45,29 @@ function drawChart(ctx, opts) {
   }
 }
 
+// 板编号角标（白底 pill，压在角格上也清晰可读）
+function drawBoardBadge(ctx, text, x, y) {
+  ctx.save();
+  ctx.font = 'bold 13px sans-serif';
+  const w = ctx.measureText(text).width + 10;
+  const h = 18;
+  ctx.fillStyle = 'rgba(255,255,255,0.88)';
+  ctx.fillRect(x, y, w, h);
+  ctx.strokeStyle = 'rgba(17,17,17,0.55)';
+  ctx.lineWidth = 1;
+  ctx.strokeRect(x, y, w, h);
+  ctx.fillStyle = '#111';
+  ctx.textAlign = 'left';
+  ctx.textBaseline = 'middle';
+  ctx.fillText(text, x + 5, y + h / 2 + 0.5);
+  ctx.restore();
+}
+
 // 坐标轴 + 底板分隔线叠加（在已绘制图纸的基础上）
 function drawGridOverlay(ctx, opts) {
   const { cols, rows, cell, offX, offY, plateSize, margin } = opts;
+  const nBx = plateSize > 0 ? Math.ceil(cols / plateSize) : 1;
+  const nBy = plateSize > 0 ? Math.ceil(rows / plateSize) : 1;
   ctx.fillStyle = '#333333';
   ctx.strokeStyle = '#333333';
   ctx.font = Math.floor(margin * 0.42) + 'px sans-serif';
@@ -75,21 +95,20 @@ function drawGridOverlay(ctx, opts) {
     if (pos <= cols * cell) { ctx.beginPath(); ctx.moveTo(offX + pos, offY); ctx.lineTo(offX + pos, offY + rows * cell); ctx.stroke(); }
     if (pos <= rows * cell) { ctx.beginPath(); ctx.moveTo(offX, offY + pos); ctx.lineTo(offX + cols * cell, offY + pos); ctx.stroke(); }
   }
-  // 底板分隔线：每 plateSize 格一条粗线 + 板编号（防拼错、提效率）
+  // 底板分隔线：每 plateSize 格一条加粗深色线（醒目"分板/裁剪"边界）+ 每块板左上角编号角标
   if (plateSize > 0) {
-    ctx.lineWidth = 2;
-    ctx.strokeStyle = 'rgba(20,20,20,0.85)';
+    ctx.lineWidth = 3;
+    ctx.strokeStyle = 'rgba(17,17,17,0.92)';
     for (let k = 1; k * plateSize <= Math.max(cols, rows); k++) {
       const pos = k * plateSize * cell;
       if (pos <= cols * cell) { ctx.beginPath(); ctx.moveTo(offX + pos, offY); ctx.lineTo(offX + pos, offY + rows * cell); ctx.stroke(); }
       if (pos <= rows * cell) { ctx.beginPath(); ctx.moveTo(offX, offY + pos); ctx.lineTo(offX + cols * cell, offY + pos); ctx.stroke(); }
-      const bx = offX + (k - 1) * plateSize * cell;
-      const by = offY + (k - 1) * plateSize * cell;
-      ctx.fillStyle = 'rgba(20,20,20,0.9)';
-      ctx.font = Math.floor(margin * 0.4) + 'px sans-serif';
-      ctx.textAlign = 'left'; ctx.textBaseline = 'top';
-      ctx.fillText('板' + k, bx + 2, by + 2);
-      ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    }
+    for (let k = 1; k <= nBx * nBy; k++) {
+      const bi = (k - 1) % nBx, bj = Math.floor((k - 1) / nBx);
+      const bx = offX + bi * plateSize * cell;
+      const by = offY + bj * plateSize * cell;
+      drawBoardBadge(ctx, '板' + k, bx + 3, by + 3);
     }
   }
 }
@@ -157,7 +176,81 @@ function exportChartToAlbumWithGrid(opts) {
   }));
 }
 
+// 板内局部坐标轴（A~列、1~行，标注在板四周，并画板外框）
+function drawLocalAxes(ctx, o) {
+  const { cols, rows, cell, offX, offY, margin } = o;
+  ctx.fillStyle = '#333';
+  ctx.font = Math.floor(margin * 0.42) + 'px sans-serif';
+  ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+  for (let x = 0; x < cols; x++) {
+    const label = colLabel(x);
+    const cx = offX + x * cell + cell / 2;
+    ctx.fillText(label, cx, offY - margin / 2);
+    ctx.fillText(label, cx, offY + rows * cell + margin / 2);
+  }
+  for (let y = 0; y < rows; y++) {
+    const label = String(y + 1);
+    const cy = offY + y * cell + cell / 2;
+    ctx.fillText(label, offX - margin / 2, cy);
+    ctx.fillText(label, offX + cols * cell + margin / 2, cy);
+  }
+  ctx.lineWidth = 2; ctx.strokeStyle = 'rgba(17,17,17,0.85)';
+  ctx.strokeRect(offX, offY, cols * cell, rows * cell);
+}
+
+// 渲染单块板（带标题与板内局部坐标）为临时图片
+function renderBoardToTempFile(opts) {
+  const { subGrid, subExternal, cell, title, showCode } = opts;
+  const rows = subGrid.length, cols = subGrid[0].length;
+  const margin = Math.max(18, Math.floor(cell * 0.85));
+  const titleH = Math.floor(cell * 1.2);
+  const W = cols * cell + 2 * margin;
+  const H = rows * cell + 2 * margin + titleH;
+  return new Promise((resolve, reject) => {
+    const off = wx.createOffscreenCanvas({ type: '2d', width: W, height: H });
+    const ctx = off.getContext('2d');
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, W, H);
+    ctx.fillStyle = '#111';
+    ctx.font = 'bold ' + Math.floor(cell * 0.7) + 'px sans-serif';
+    ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
+    ctx.fillText(title, margin, titleH / 2);
+    const offX = margin, offY = margin + titleH;
+    drawChart(ctx, { grid: subGrid, external: subExternal, cell, showCode, offX, offY });
+    drawLocalAxes(ctx, { cols, rows, cell, offX, offY, margin });
+    wx.canvasToTempFilePath({ canvas: off, success: r => resolve(r.tempFilePath), fail: e => reject(e) });
+  });
+}
+
+// 逐板导出：把整图按 plateSize 切成多块，每块单独一张图（自带局部坐标+全局列范围），依次存相册
+function exportBoardsToAlbum(opts) {
+  const { grid, external, cell, showCode, plateSize } = opts;
+  const rows = grid.length, cols = grid[0].length;
+  const nBx = Math.ceil(cols / plateSize), nBy = Math.ceil(rows / plateSize);
+  const total = nBx * nBy;
+  let idx = 0;
+  return new Promise((resolve, reject) => {
+    const next = () => {
+      if (idx >= total) { resolve(total); return; }
+      const bi = idx % nBx, bj = Math.floor(idx / nBx);
+      const c0 = bi * plateSize, r0 = bj * plateSize;
+      const c1 = Math.min(c0 + plateSize, cols), r1 = Math.min(r0 + plateSize, rows);
+      const subGrid = [], subExternal = [];
+      for (let y = r0; y < r1; y++) { subGrid.push(grid[y].slice(c0, c1)); subExternal.push(external[y].slice(c0, c1)); }
+      const title = '板 ' + (idx + 1) + '/' + total + '（全局列 ' + colLabel(c0) + '~' + colLabel(c1 - 1) + '）';
+      renderBoardToTempFile({ subGrid, subExternal, cell, title, showCode })
+        .then(path => new Promise((res, rej) => {
+          wx.saveImageToPhotosAlbum({ filePath: path, success: () => res(), fail: e => rej(e) });
+        }))
+        .then(() => { idx++; next(); })
+        .catch(e => reject(e));
+    };
+    next();
+  });
+}
+
 module.exports = {
   drawChart, drawGridOverlay, exportChartToAlbum, exportChartToFile: renderToTempFile,
-  exportChartToAlbumWithGrid, exportChartToFileWithGrid: renderToTempFileWithGrid, pickTextColor
+  exportChartToAlbumWithGrid, exportChartToFileWithGrid: renderToTempFileWithGrid, pickTextColor,
+  renderBoardToTempFile, exportBoardsToAlbum
 };
