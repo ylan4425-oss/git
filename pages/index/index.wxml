@@ -84,4 +84,13 @@
       <button class="quiz-close" bindtap="closeBrandQuiz">关闭</button>
     </view>
   </view>
+
+  <!-- 赞赏：右下角胶囊，点开居中浮窗 -->
+  <view class="donate-fab" bindtap="openDonate">赏</view>
+  <view wx:if="{{showDonate}}" class="mask" bindtap="closeDonate">
+    <view class="donate-card" catchtap="noop">
+      <view class="donate-close" catchtap="closeDonate">×</view>
+      <image class="donate-img" src="/assets/appreciate-code.png" mode="widthFix" show-menu-by-longpress="{{true}}"></image>
+    </view>
+  </view>
 </view>

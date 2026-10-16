@@ -201,3 +201,49 @@
   color: #374151;
   font-size: 26rpx;
 }
+
+/* ── 赞赏：右下角胶囊 + 居中浮窗 ── */
+.donate-fab {
+  position: fixed;
+  right: 28rpx;
+  bottom: calc(120rpx + env(safe-area-inset-bottom));
+  width: 88rpx;
+  height: 88rpx;
+  border-radius: 50%;
+  background: rgba(17, 17, 17, 0.78);
+  color: #ffd21e;
+  font-size: 34rpx;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 6rpx 16rpx rgba(0, 0, 0, 0.2);
+  z-index: 40;
+}
+.donate-card {
+  position: relative;
+  width: 640rpx;
+  background: #fff;
+  border-radius: 24rpx;
+  padding: 20rpx;
+  box-sizing: border-box;
+}
+.donate-img {
+  width: 100%;
+  display: block;
+  border-radius: 12rpx;
+}
+.donate-close {
+  position: absolute;
+  top: -16rpx;
+  right: -16rpx;
+  width: 56rpx;
+  height: 56rpx;
+  border-radius: 50%;
+  background: rgba(17, 17, 17, 0.82);
+  color: #fff;
+  font-size: 36rpx;
+  line-height: 52rpx;
+  text-align: center;
+  box-shadow: 0 4rpx 10rpx rgba(0, 0, 0, 0.25);
+}

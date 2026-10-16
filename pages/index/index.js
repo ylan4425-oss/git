@@ -32,7 +32,8 @@ Page({
     exportingGrid: false,
     exportingBoards: false,
     showBrandQuiz: false,
-    quizBrands: []
+    quizBrands: [],
+    showDonate: false
   },
 
   onLoad() {
@@ -240,6 +241,10 @@ Page({
     this.applyBrand(DEFAULT_BRAND);
     this.closeBrandQuiz();
   },
+
+  // 赞赏码：右下角胶囊 → 居中浮窗（关了回到胶囊）
+  openDonate() { this.setData({ showDonate: true }); },
+  closeDonate() { this.setData({ showDonate: false }); },
 
   exportImage() {
     if (!this._result || this.data.exporting) return;
